@@ -8,9 +8,15 @@ module.exports.getWeather = async (req, res) => {
     q,
     lat,
     lng,
-    id,
-    appid: process.env.WEATHER_API_KEY
+    id
   })
+
+  if (!Object.keys(qs).length) {
+    return res.status(400).send({msg: 'please provide query params'})
+  }
+
+  qs.appid = process.env.WEATHER_API_KEY
+
   const options = {
     uri: process.env.WEATHER_API_URL + 'forecast',
     qs,
