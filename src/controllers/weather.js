@@ -9,8 +9,8 @@ module.exports.getWeather = async (req, res) => {
     q,
     lat,
     lon,
-    id
-    // cnt: 7 // results for one week
+    id,
+    cnt: 9 // results for next 24h
   })
 
   if (!Object.keys(qs).length) {
