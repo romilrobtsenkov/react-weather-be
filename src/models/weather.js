@@ -3,12 +3,11 @@ const Schema = mongoose.Schema
 
 const WeatherSchema = new Schema(
   {
-    query: { type: String, required: true },
-    data: { type: String, required: true },
-    expires: {
-      type: Date,
-      expires: 60 // 60 seconds after expires
-    }
+    query: { type: Object, required: true },
+    data: { type: Object, required: true },
+    requestCount: { type: Number, required: true, default: 0 },
+    requests: [{ type: Date }],
+    expires: { type: Date, required: true }
   },
   {
     timestamps: true
