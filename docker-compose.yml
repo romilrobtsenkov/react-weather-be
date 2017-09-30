@@ -1,0 +1,31 @@
+version: "2"
+
+services:
+  mongoDB:
+    image: mongo:latest
+    container_name: "mongoDB"
+    networks:
+      - main
+    ports:
+      - 27017:27017
+    command: mongod --logpath=/var/log/mongodb/mongodb.log --logappend
+
+  app:
+    image: react-weather-be
+    container_name: "nodeApp"
+    networks:
+      - main
+    build: . 
+    ports:
+      - ${APP_PORT}:${APP_PORT} 
+    volumes:
+      - .:/var/react-weather-be
+      - /var/react-weather-be/node_modules
+    depends_on:
+      - mongoDB
+    env_file:
+      - .env
+    command: npm run start-dev
+
+networks:
+  main:
