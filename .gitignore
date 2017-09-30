@@ -3,7 +3,7 @@
 
 # misc
 .DS_Store
-.env 
+.env
 
 # database
 data
