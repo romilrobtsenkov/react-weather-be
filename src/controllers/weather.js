@@ -9,8 +9,8 @@ module.exports.getWeather = async (req, res) => {
     q,
     lat,
     lon,
-    id,
-    cnt: 7 // results for one week
+    id
+    // cnt: 7 // results for one week
   })
 
   if (!Object.keys(qs).length) {
@@ -41,7 +41,7 @@ module.exports.getWeather = async (req, res) => {
   qs.appid = process.env.WEATHER_API_KEY
 
   const options = {
-    uri: process.env.WEATHER_API_URL + 'forecast/daily',
+    uri: process.env.WEATHER_API_URL + 'forecast',
     qs,
     json: true
   }
