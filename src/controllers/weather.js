@@ -1,21 +1,23 @@
 const Weather = require('../models/weather')
 const rp = require('request-promise')
+// rp.debug = true
 const { removeEmptyFromObject } = require('../utils/common')
 
 module.exports.getWeather = async (req, res) => {
-  const { q, lat, lng, id } = req.query
+  const { q, lat, lon, id } = req.query
   const qs = removeEmptyFromObject({
     q,
     lat,
-    lng,
-    id
+    lon,
+    id,
+    cnt: 7 // results for one week
   })
 
   if (!Object.keys(qs).length) {
     return res.status(400).send({ msg: 'please provide query params' })
   }
 
-  const queryWithoutId = JSON.parse(JSON.stringify(qs))
+  const queryWithoutId = JSON.stringify(qs)
   const cachedData = await Weather.findOneAndUpdate(
     {
       query: queryWithoutId,
@@ -26,22 +28,26 @@ module.exports.getWeather = async (req, res) => {
       $push: { requests: new Date() }
     },
     { new: true }
-  ).select('data')
+  ).select('data createdAt')
 
   if (cachedData) {
-    return res.json({ status: 'cached', data: cachedData.data })
+    return res.json({
+      status: 'cached',
+      data: cachedData.data,
+      dateModified: cachedData.createdAt
+    })
   }
 
   qs.appid = process.env.WEATHER_API_KEY
 
   const options = {
-    uri: process.env.WEATHER_API_URL + 'forecast',
+    uri: process.env.WEATHER_API_URL + 'forecast/daily',
     qs,
     json: true
   }
 
   const data = await rp(options)
-  if (data.cod !== '200') return res.status(400).send()
+  if (data.cod !== '200') return res.status(400).send({ msg: 'unable to get data from API' })
 
   const cacheUntil = new Date(new Date() * 1 + parseInt(process.env.CACHE_TIMEOUT))
   const newWeather = new Weather({
@@ -50,7 +56,10 @@ module.exports.getWeather = async (req, res) => {
     expires: cacheUntil
   })
 
-  await newWeather.save()
-
-  res.status(200).send({ status: 'api', data })
+  const savedWeather = await newWeather.save()
+  res.status(200).send({
+    status: 'api',
+    data,
+    dateModified: savedWeather.createdAt
+  })
 }
