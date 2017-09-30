@@ -5,7 +5,6 @@ const WeatherSchema = new Schema(
   {
     query: { type: String, required: true },
     data: { type: String, required: true },
-    deleted: { type: Date },
     expires: {
       type: Date,
       expires: 60 // 60 seconds after expires
@@ -16,4 +15,4 @@ const WeatherSchema = new Schema(
   }
 )
 
-module.exports = mongoose.model('Curriculum', WeatherSchema)
+module.exports = mongoose.model('Weather', WeatherSchema)

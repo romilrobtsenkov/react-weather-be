@@ -8,6 +8,10 @@ services:
       - main
     ports:
       - 27017:27017
+    environment:
+      - MONGO_DATA_DIR=app-data:/data/db
+    volumes:
+      - app-data:/data/db
     command: mongod --logpath=/var/log/mongodb/mongodb.log --logappend
 
   app:
@@ -26,6 +30,9 @@ services:
     env_file:
       - .env
     command: npm run start-dev
+
+volumes:
+  app-data:
 
 networks:
   main:
