@@ -49,8 +49,15 @@ module.exports.getWeather = async (req, res) => {
   const data = await rp(options)
   if (data.cod !== '200') return res.status(400).send({ msg: 'unable to get data from API' })
 
-  // one result per day at noon
-  data.list = data.list.filter(item => item.dt_txt.substring(11, 13) === '12')
+  // one result per day at noon, except first for current weather
+  let keepFirst = true
+  data.list = data.list.filter(item => {
+    if (keepFirst) {
+      keepFirst = false
+      return true
+    }
+    return item.dt_txt.substring(11, 13) === '12'
+  })
 
   const cacheUntil = new Date(new Date() * 1 + parseInt(process.env.CACHE_TIMEOUT))
   const newWeather = new Weather({
