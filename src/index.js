@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 require('dotenv').config()
 
 const testEnvironment = process.env.NODE_ENV === 'test'
+const prodEnvironment = process.env.NODE_ENV === 'production'
 
 const app = express()
 if (!testEnvironment) app.use(morgan('dev'))
@@ -25,7 +26,7 @@ app.use((err, req, res, next) => {
   })
 })
 
-if (!testEnvironment) mongoose.set('debug', true)
+if (!testEnvironment && !prodEnvironment) mongoose.set('debug', true)
 mongoose.Promise = global.Promise
 const mongoDBUri = testEnvironment
   ? process.env.MONGODB_TEST_URI

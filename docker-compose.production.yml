@@ -1,0 +1,16 @@
+version: "2"
+
+services:
+  mongoDB:
+    container_name: "mongoDBProduction"
+
+  app:
+    image: react-weather-be
+    container_name: "nodeAppProduction"
+    command: npm run start
+
+volumes:
+  app-data:
+
+networks:
+  main:
