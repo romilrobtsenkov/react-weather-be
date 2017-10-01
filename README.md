@@ -20,7 +20,7 @@ Application with hot reload will be available from `localhost:3000`
 
 ### Start production 
 ```
-docker-compose -f docker-compose.yml -f docker-compose.production.yml up
+docker-compose -f docker-compose.yml -f docker-compose.production.yml up -d
 ```
 
 Block connections via firewall to MongoDB (27017) and nodeApp ports (3000)
