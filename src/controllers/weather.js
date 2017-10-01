@@ -9,8 +9,8 @@ module.exports.getWeather = async (req, res) => {
     q,
     lat,
     lon,
-    id,
-    cnt: 9 // results for next 24h
+    id
+    // cnt: 9 // results for next 24h
   })
 
   if (!Object.keys(qs).length) {
@@ -48,6 +48,9 @@ module.exports.getWeather = async (req, res) => {
 
   const data = await rp(options)
   if (data.cod !== '200') return res.status(400).send({ msg: 'unable to get data from API' })
+
+  // one result per day at noon
+  data.list = data.list.filter(item => item.dt_txt.substring(11, 13) === '12')
 
   const cacheUntil = new Date(new Date() * 1 + parseInt(process.env.CACHE_TIMEOUT))
   const newWeather = new Weather({
